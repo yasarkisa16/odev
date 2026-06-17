@@ -66,7 +66,7 @@ duruş kayıplarını hızlıca tespit etmek ister.
 
 | Tur | Açıklama | Link |
 |-----|----------|------|
-| Tur A | Donatımsız (boş sohbet) | _(Claude "Share" / Gemini paylaşım linki)_ |
+| Tur A | Donatımsız (boş sohbet) | https://claude.ai/share/1b3ba858-ff98-49dc-ad40-c5b779fe6f08 |
 | Tur B | Donatılmış (tam yönetişim) | _(link)_ |
 | Doğrulama | 6 zorunlu senaryo | _(link)_ |
 

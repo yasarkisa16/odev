@@ -12,7 +12,7 @@
 
 ## Paylaşılan sohbet linki
 
-> ⬜ _(Buraya Claude "Share" linkini yapıştırın — bu link olmadan teslim değerlendirilmez.)_
+https://claude.ai/share/1b3ba858-ff98-49dc-ad40-c5b779fe6f08
 
 ---
 
