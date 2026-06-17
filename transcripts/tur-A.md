@@ -37,12 +37,24 @@ Tek dosya HTML/CSS/JS dashboard üretildi → [`../dashboard/tur-A/valeo-oee-das
 
 ## Üretim 2 (tekrarlanabilirlik kontrolü)
 
-> ⬜ Aynı promptu **boş yeni bir sohbette** 2. kez çalıştırın ve çıktıyı buraya ekleyin.
-> Beklenen: yapı/tasarım **sapar** (farklı renk paleti, farklı bölüm düzeni, farklı grafik seçimi).
+Aynı prompt **boş yeni bir sohbette** 2. kez çalıştırıldı → çıktı **saptı**.
+İkinci çıktı: [`../dashboard/tur-A/valeo-oee-dashboard-uretim-2.html`](../dashboard/tur-A/valeo-oee-dashboard-uretim-2.html)
 
-```
-(2. üretimin çıktısı / farklılık notu)
-```
+### İki üretim arasındaki farklar (kanıt)
+
+| Eksen | Üretim 1 | Üretim 2 |
+|-------|----------|----------|
+| Dosya tipi | Tam HTML belgesi (kendi `:root` teması) | Parça/artifact (`--color-*` token'ları, inline stil) |
+| Veri üretimi | `mulberry32`, seed 20260617, 30 gün | `seededRandom` LCG, seed 42, 21 gün |
+| Hat adları | "Hat 1 – Silecek Sistemleri" vb. açıklamalı | Sadece "Hat 1".."Hat 4" |
+| Ekran kompozisyonu | Gauge + Trend + Hat bar + Vardiya bar + Pareto + 2 tablo | Gauge + Trend + Pareto + 1 tablo |
+| Durum etiketleri | "Hedefte / İzlenmeli / Kritik" | "Dünya standardı / Kabul edilebilir / İyileştirme gerekli" |
+| Renk paleti | #4a90d9 / #0e1217 | #185FA5 / #D85A30 |
+
+**Sonuç:** Aynı prompt, yönetişim katmanı olmadan **farklı veri modeli, farklı görsel
+sistem, farklı ekran sayısı ve farklı durum taksonomisi** üretti. Tur A çıktısı
+**tekrarlanabilir değildir**. Tur B'de aynı senaryo, üretim standardı + kalıcı talimat
+sayesinde kararlı biçimde üretilecektir.
 
 ---
 
