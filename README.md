@@ -1,0 +1,93 @@
+# VALEO × AdAstra — Ödev #1: Yönetişimli Dashboard Üretim Hattı
+
+> Kurumsal Yapay Zekâ Yetkinlik Programı · Ara Dönem · Saha Uygulaması
+> Teslim: GitHub · Teslim Tarihi: 18.06.2026 – 23:59
+
+Bu depo, aynı dashboard'u **her seferinde aynı standartta, kurallı ve tekrarlanabilir**
+biçimde üreten bir **üretim hattı** (yönetişim katmanı) kurmayı amaçlar. Değerlendirilen
+çıktı (dashboard) değil, çıktıyı üreten **yapılandırmadır**: asistan kabı (Project/Gem),
+kalıcı talimatlar, üretim standardı (Skill/Gem) ve canlı veri bağlantısı.
+
+---
+
+## 1. Genel Bilgiler
+
+| Alan | Değer |
+|------|-------|
+| **Ad-Soyad** | _(doldurun)_ |
+| **Ekip** | _(Ar-Ge / Tasarım / After-Market — seçin)_ |
+| **Seçilen Araç** | _(Gemini **veya** Claude — birini seçin)_ |
+| **Seçilen Senaryo** | **S1 — Hat Verimi & OEE Panosu** _(S1–S6 havuzundan birini seçin)_ |
+| **Hedef Persona** | Üretim Müdürü |
+
+> Aşağıdaki şablon **S1 (OEE)** senaryosuna göre hazırlanmıştır. Farklı bir senaryo
+> seçerseniz `veri/` ve standart metnindeki metrikleri ona göre uyarlayın.
+
+---
+
+## 2. Senaryo & Persona
+
+**Senaryo:** S1 — Hat Verimi & OEE Panosu
+**Persona:** Üretim Müdürü — vardiya ve hat bazında verimliliği tek ekranda görüp
+duruş kayıplarını hızlıca tespit etmek ister.
+
+**Panonun cevapladığı 3 soru:**
+1. Hangi hat / vardiya OEE hedefinin altında kalıyor?
+2. Toplam duruş süresinin başlıca nedenleri neler (Pareto)?
+3. OEE trendi son dönemde iyileşiyor mu, kötüleşiyor mu?
+
+---
+
+## 3. Depo Yapısı
+
+```
+.
+├── README.md                      # bu dosya (senaryo, araç, persona, sohbet linkleri)
+├── talimatlar/
+│   ├── kalici-talimat.md          # Project/Gem kalıcı talimat metni (Rule'lar)
+│   └── uretim-standardi.md        # Skill/Gem üretim standardı (tasarım + anatomi + grafik)
+├── veri/
+│   └── veri.csv                   # sentetik veri (canlı bağlantı için Sheets'e de yüklenir)
+├── dashboard/                     # üretilen çıktı (HTML/JS) — Tur B çıktısı
+├── transcripts/
+│   ├── tur-A.md                   # donatımsız tur oturum kaydı
+│   ├── tur-B.md                   # donatılmış tur oturum kaydı
+│   └── dogrulama.md               # 6 zorunlu doğrulama senaryosu
+├── ekran-goruntuleri/             # Connector bağlantısı, talimat ekranı, standart uygulanışı
+└── rapor.md                       # Bölüm 8 raporu (PDF'e çevrilip rapor.pdf olarak da eklenir)
+```
+
+---
+
+## 4. Paylaşılan Sohbet Linkleri
+
+> ⚠️ Transcript / paylaşılan sohbet linki olmayan teslim **değerlendirilmez**.
+> Linkler erişime açık olmalıdır.
+
+| Tur | Açıklama | Link |
+|-----|----------|------|
+| Tur A | Donatımsız (boş sohbet) | _(Claude "Share" / Gemini paylaşım linki)_ |
+| Tur B | Donatılmış (tam yönetişim) | _(link)_ |
+| Doğrulama | 6 zorunlu senaryo | _(link)_ |
+
+---
+
+## 5. Kanıt Dizini
+
+| Kanıt | Nerede | Durum |
+|-------|--------|-------|
+| Standart uygulandı | `transcripts/tur-B.md` | ⬜ |
+| Kural etkin | `transcripts/tur-B.md` | ⬜ |
+| Canlı veri | `ekran-goruntuleri/` + `transcripts/tur-B.md` | ⬜ |
+| Bağlam yalın (Context notu) | `rapor.md` | ⬜ |
+| Tekrar kararlı | `transcripts/dogrulama.md` | ⬜ |
+| Paylaşılan sohbet | bu README | ⬜ |
+
+---
+
+## 6. Notlar
+
+- **Gerçek / gizli VALEO verisi kullanılmaz.** `veri/veri.csv` tamamen sentetiktir.
+- Veri **koda gömülmez**; her zaman bağlı kaynaktan (Sheets/dosya) okunur.
+- Transcript'ler **kesintisiz** olmalıdır (istekten çıktıya kadar). Düzenlenmiş /
+  kırpılmış transcript kanıt sayılmaz.
