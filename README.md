@@ -69,6 +69,7 @@ duruş kayıplarını hızlıca tespit etmek ister.
 | Tur A | Donatımsız (boş sohbet) | https://claude.ai/share/1b3ba858-ff98-49dc-ad40-c5b779fe6f08 |
 | Tur B | Donatılmış (tam yönetişim) | _(link)_ |
 | Doğrulama (Senaryo 3 — kural ihlali) | Veri gömme reddi testi | https://claude.ai/share/b381d886-8733-4797-851c-1ec2e40cbc9d |
+| Doğrulama (DS2 / DS4 / DS5 / DS6) | Boş veri, standart, canlı veri, context | https://claude.ai/share/e542bbbf-793d-4ce4-9529-9e9c362b876a |
 
 ---
 
