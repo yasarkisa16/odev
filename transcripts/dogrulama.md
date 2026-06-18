@@ -37,10 +37,24 @@ Tur A'da iki üretim taban tabana sapıyordu; burada kararlı.
 ## 2. Boş / Bozuk Veri
 **Doğrulanacak:** Veriyi boşalt veya boz. Dashboard çökmez; anlamlı boş-durum gösterir.
 
-```
-(Veri boşaltıldığında/bozulduğunda dashboard davranışı — transcript/ekran görüntüsü)
-```
-- [ ] Çökme yok, anlamlı boş-durum/hata mesajı
+**Paylaşılan sohbet:** https://claude.ai/share/e542bbbf-793d-4ce4-9529-9e9c362b876a
+
+### Sonuç — üç katmanlı koruma (koddan doğrulandı)
+1. **Veri katmanı** (`veri-katmani.js`): kaynak yoksa/okunamıyorsa veya CSV bozuksa
+   `Error` fırlatır, asla sessiz `null` dönmez. Bozuk satırlar tek tek `atlananSatirlar`'a
+   düşüp atlanır (bir kötü satır tüm veriyi çökertmez).
+   ```js
+   yanit = await fetch(VERI_KAYNAGI_YOLU, { cache: "no-store" });
+   if (!yanit.ok) throw new Error("Veri kaynağı " + yanit.status + " durum koduyla döndü.");
+   if (kayitlar.length === 0) throw new Error("Veri kaynağında geçerli hiçbir satır bulunamadı.");
+   ```
+2. **Uygulama katmanı**: hatayı tek noktada yakalar, JS hatası ekrana sızmaz;
+   `anaRenderEt()` → `yukleniyor` (spinner) / `hata` (kırmızı uyarı + "Yeniden Dene") / `hazir`.
+   404 simülasyonuyla test edildi (CSV taşınıp geri konuldu); ekran çökmedi.
+3. **Filtreyle eşleşen kayıt yoksa**: her ekran `bosBlokOlustur` ile ikon + başlık +
+   "Filtreleri Sıfırla" gösterir → boş veri asla beyaz/kırık ekrana çıkmaz.
+
+- [x] Çökme yok, anlamlı boş-durum/hata mesajı (yükleniyor/hata/kayıt-yok üç durumu da ele alındı)
 
 ---
 
@@ -71,27 +85,63 @@ Sheet/veri.csv bağlantısını tamamen kaldır. Tek dosyada, gömülü veriyle 
 ## 4. Standart Uygulanışı
 **Doğrulanacak:** "KPI panosu üret" de. Skill/Gem standardı (renk, anatomi, grafik) uygulanır.
 
-```
-(Üretilen KPI panosu transcript'i — standart öğeleri işaretle)
-```
-- [ ] Renk = anlam, ekran anatomisi, doğru grafik seçimi uygulandı
+**Paylaşılan sohbet:** https://claude.ai/share/e542bbbf-793d-4ce4-9529-9e9c362b876a
+
+### Sonuç — standardın üç maddesi E1 panosunda görülüyor
+- **Renk = anlam:** Rozetler hiçbir yerde tek başına renkle değil; **ikon + "Hedef Üstü/Altı" metni**
+  ile birlikte. Rengi belirleyen tek kaynak `deger >= hedef` karşılaştırması (elle boyanmış kart yok):
+  ```js
+  const iyiMi = deger >= hedef;
+  rozetHtml = `<span class="durum-rozeti ${iyiMi ? "durum-rozeti--iyi" : "durum-rozeti--kotu"}">
+    ${iyiMi ? ikonTik(13) : ikonUyari(13)}${iyiMi ? "Hedef Üstü" : "Hedef Altı"}</span>`;
+  ```
+- **Kart anatomisi:** Her kart aynı iskelet — başlık → büyük değer → hedef rozeti → önceki döneme
+  göre delta → hedef satırı. 6 kart = standardın "4–6 metrik, ilk bakışta okunur" sınırında.
+- **Doğru metrik seçimi:** OEE'nin dört bileşeni yüzde; ham toplamlar (Toplam Üretim, Toplam Duruş)
+  adet/dakika — birim metrik tanımıyla tutarlı, keyfi değil.
+
+- [x] Renk = anlam, ekran anatomisi, doğru metrik seçimi uygulandı
 
 ---
 
 ## 5. Canlı Veri
 **Doğrulanacak:** Bağlı Sheet'te bir değeri değiştir; tek istekle dashboard güncellenir.
 
+**Paylaşılan sohbet:** https://claude.ai/share/e542bbbf-793d-4ce4-9529-9e9c362b876a
+
+### Sonuç — veri her seferinde taze okunuyor (gömülü değil)
+Veri hiçbir JS değişkenine "yapıştırılmış" değil; her `veriGetir()` çağrısı ağdan
+taze okur (`cache: "no-store"` → tarayıcı önbelleği bile devre dışı):
+```js
+const VERI_KAYNAGI_YOLU = "./veri/veri.csv";
+yanit = await fetch(VERI_KAYNAGI_YOLU, { cache: "no-store" });
 ```
-(Sheet'te değer değişikliği öncesi/sonrası + tek istekle güncelleme transcript'i)
+"Canlı Veriyi Yenile" butonu sayfayı yeniden yüklemeden aynı fonksiyonu çağırır:
+```js
+el.yenileBtn.addEventListener("click", () => veriYukleVeBaslat(false));
 ```
-- [ ] Veri canlı okundu, gömülü değil
+Akış: Sheet'te `Durus_Suresi_dk` değişince → butona bas/yenile → `fetch` yeni CSV'yi çeker
+→ `metrikHesapla` tüm değerleri o anki ham veriden yeniden toplar (ara önbellek yok) → ekran güncellenir.
+`VERI_KAYNAGI_YOLU`'nu Sheet'in "Web'de yayınla → CSV" linkiyle değiştirmek tek satır; `uygulama.js`'e dokunulmaz.
+
+- [x] Veri canlı okundu, gömülü değil
+> Not (opsiyonel güçlendirme): Google Sheet'te bir hücreyi değiştirip "tekrar oku" diyerek
+> öncesi/sonrası ekran görüntüsü eklenirse kanıt görsel olarak da tamamlanır.
 
 ---
 
 ## 6. Context Bütçesi
 **Doğrulanacak:** Bağlamı nasıl yalın tuttuğunu göster (standardı bilgi olarak yükleme; yeni sohbet).
 
-```
-(Standardın Project/Gem bilgisine yüklendiği + sohbetin kısa tutulduğu kanıt)
-```
-- [ ] Bağlam şişkinliği önlendi (bkz. rapor.md → Context Bütçe Notu)
+**Paylaşılan sohbet:** https://claude.ai/share/e542bbbf-793d-4ce4-9529-9e9c362b876a
+
+### Sonuç — bağlam bilinçli yalın tutuldu
+- `uretim-standardi.md` ve `veri.csv` bu sohbete **hiç yapıştırılmadı** — Project bilgi
+  dosyası olarak verildi; asistan onları gerektiğinde dosya araçlarıyla okudu, ham içeriği
+  sohbete dökmedi (CSV doğrudan `veri/veri.csv`'ye kopyalandı, standart kurallara dönüştü).
+- `kalici-talimat.md` kısa ve davranışsal — Project "talimat" alanına bir kez girilir,
+  her mesajda tekrarlanmaz.
+- Bu turda da aynı disiplin: 4 senaryoya **az sayıda hedefli kod alıntısıyla** cevap verildi;
+  ~810 satırlık `uygulama.js` veya 180 satırlık CSV tekrar basılmadı — yalnızca kanıtlayan satırlar gösterildi.
+
+- [x] Bağlam şişkinliği önlendi (ayrıntı: rapor.md → Context Bütçe Notu)
