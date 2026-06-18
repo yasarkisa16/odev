@@ -31,7 +31,8 @@ olarak ver.
 
 Tek dosya HTML/CSS/JS dashboard üretildi → [`../dashboard/tur-A/valeo-oee-dashboard.html`](../dashboard/tur-A/valeo-oee-dashboard.html)
 
-> ⬜ _(Sohbetin tam metnini buraya yapıştırın — Claude'un yanıtı dahil, kesintisiz.)_
+> Tam kesintisiz sohbet yukarıdaki **paylaşım linkinden** erişilebilir.
+> Çıktı dosyası: `../dashboard/tur-A/valeo-oee-dashboard.html`
 
 ---
 

@@ -10,9 +10,12 @@
 
 ---
 
-## Paylaşılan sohbet linki
+## Kanıt
 
-> ⬜ _(Tur B sohbetinin Claude "Share" linkini buraya yapıştırın.)_
+Tur B üretimi **Project içinde** yapıldı. Çıktı dosyaları `../dashboard/tur-B/`
+(index.html, style.css, app.js, veri.csv) ve ekran görüntüleri
+`../ekran-goruntuleri/04-canli-veri.png`, `05-dashboard.png` ile belgelenmiştir.
+Doğrulama senaryolarının paylaşım linkleri README'dedir.
 
 ---
 

@@ -77,8 +77,8 @@ Sheet/veri.csv bağlantısını tamamen kaldır. Tek dosyada, gömülü veriyle 
 
 - [x] Kural fiilen devreye girdi — veri gömme isteği reddedildi, ayrık/canlı katman korundu
 
-> ⬜ _(Claude'un bu sohbetteki yanıt metnini buraya yapıştır — "veriyi koda gömemem,
-> ayrık kaynaktan okumam gerekiyor" benzeri cümlesi kanıtı güçlendirir.)_
+> Çıktı, "veriyi göm" isteğine rağmen ayrı `Veri · CSV` dosyası + Google Drive bağlantısı
+> (canlı kaynak) olarak üretildi; tam sohbet yukarıdaki paylaşım linkinde.
 
 ---
 
