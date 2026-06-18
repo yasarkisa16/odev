@@ -9,7 +9,7 @@
 
 | Alan | Değer |
 |------|-------|
-| Ad-Soyad | _(adınızı yazın)_ |
+| Ad-Soyad | **Yaşar KISA** |
 | Ekip | **After-Market** |
 | Seçilen Araç | **Claude (claude.ai)** — Project + Custom Instructions + Project Knowledge + Google Drive Connector |
 | Senaryo | **S1 — Hat Verimi & OEE Panosu** |

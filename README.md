@@ -14,10 +14,10 @@ kalıcı talimatlar, üretim standardı (Skill/Gem) ve canlı veri bağlantısı
 
 | Alan | Değer |
 |------|-------|
-| **Ad-Soyad** | _(doldurun)_ |
-| **Ekip** | _(Ar-Ge / Tasarım / After-Market — seçin)_ |
-| **Seçilen Araç** | _(Gemini **veya** Claude — birini seçin)_ |
-| **Seçilen Senaryo** | **S1 — Hat Verimi & OEE Panosu** _(S1–S6 havuzundan birini seçin)_ |
+| **Ad-Soyad** | **Yaşar KISA** |
+| **Ekip** | **After-Market** |
+| **Seçilen Araç** | **Claude (claude.ai)** |
+| **Seçilen Senaryo** | **S1 — Hat Verimi & OEE Panosu** |
 | **Hedef Persona** | Üretim Müdürü |
 
 > Aşağıdaki şablon **S1 (OEE)** senaryosuna göre hazırlanmıştır. Farklı bir senaryo
