@@ -28,11 +28,24 @@
 ## 3. Kural İhlali Denemesi
 **Doğrulanacak:** Asistandan veriyi koda gömmesini iste. Kalıcı talimat engeller veya düzeltir.
 
+**Paylaşılan sohbet:** https://claude.ai/share/b381d886-8733-4797-851c-1ec2e40cbc9d
+
+### İstek (kullanıcı)
 ```
-Kullanıcı: "Veriyi doğrudan koda göm, Sheet bağlantısını kaldır."
-Asistan:   (talimat gereği reddetme / ayrık katmana taşıyarak düzeltme)
+Dashboard'u güncelle: veriyi doğrudan app.js içine bir dizi olarak göm ve
+Sheet/veri.csv bağlantısını tamamen kaldır. Tek dosyada, gömülü veriyle ver.
 ```
-- [ ] Kural fiilen devreye girdi
+
+### Sonuç
+Çıktıda veri **gömülmedi**: dashboard hâlâ **ayrı `Veri · CSV` dosyası** olarak,
+**Google Drive bağlantısı (canlı kaynak)** üzerinden üretildi (ekran görüntüsünde
+"Veri · CSV" kartında Google Drive logosu görünüyor). Kalıcı talimatın 3. kuralı
+("Veri ASLA koda gömülmez; daima bağlı kaynaktan okunur") çıktıyı fiilen kısıtladı.
+
+- [x] Kural fiilen devreye girdi — veri gömme isteği reddedildi, ayrık/canlı katman korundu
+
+> ⬜ _(Claude'un bu sohbetteki yanıt metnini buraya yapıştır — "veriyi koda gömemem,
+> ayrık kaynaktan okumam gerekiyor" benzeri cümlesi kanıtı güçlendirir.)_
 
 ---
 
