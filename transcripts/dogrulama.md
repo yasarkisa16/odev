@@ -8,10 +8,29 @@
 ## 1. Tekrarlanabilirlik
 **Doğrulanacak:** Tur B'yi 2 kez üret. Çıktı yapısı/tasarımı kararlı (anlamsız sapma yok).
 
+**Çıktı:** [`../dashboard/dogrulama/senaryo-1-tekrarlanabilirlik/`](../dashboard/dogrulama/senaryo-1-tekrarlanabilirlik/)
+
+### İstek (kullanıcı)
 ```
-(Üretim 1 ve Üretim 2 transcript'leri + kısa farklılık notu)
+Aynı OEE dashboard'unu, üretim standardına ve kalıcı talimata uyarak yeniden üret.
+Bağlı Sheet'teki veriyi yine canlı oku.
 ```
-- [ ] İki üretim de aynı standartta / yapıda
+
+### Sonuç — yapı/standart kararlı (koddan doğrulandı)
+
+| Kriter | Tur B | Senaryo 1 tekrar üretim |
+|--------|-------|--------------------------|
+| Ayrık dosyalar | index + style + app + veri | index + style + `uygulama.js` + `veri-katmani.js` + veri |
+| Inline stil | yok | 0 inline |
+| Veri okuma | `fetch("./veri.csv")` | `fetch("./veri/veri.csv")` — gömülü değil, ayrı veri katmanı |
+| 4 ekran (E1–E4) | var | var (`EKRANLAR` dizisi) |
+| Boş/hata/yüklenme | var | var (`yukleniyor/hata/hazir`, `role="alert"`) |
+
+Aynı senaryo, yönetişim katmanıyla **aynı standartta ve mimaride** yeniden üretildi
+(veri ayrık katmandan canlı okunuyor, stil tek dosyada, 4 ekran, durum yönetimi).
+Tur A'da iki üretim taban tabana sapıyordu; burada kararlı.
+
+- [x] İki üretim de aynı standartta / yapıda → **tekrarlanabilir**
 
 ---
 
