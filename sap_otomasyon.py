@@ -67,41 +67,94 @@ def sap_sisteme_gir():
         return False
 
 
-def sap_siparis_calistir():
+def sap_siparis_cek():
 
-    # sap_siparis.exe ve data klasörü, bu script ile aynı dizinde bekleniyor.
+    # data klasörü, bu script ile aynı dizinde bekleniyor.
 
     script_dizini = os.path.dirname(os.path.abspath(__file__))
 
-    exe_yolu = os.path.join(script_dizini, "sap_siparis.exe")
-
     data_klasoru = os.path.join(script_dizini, "data")
+
+    dosya_adi = "siparis.xlsx"
 
     try:
 
         os.makedirs(data_klasoru, exist_ok=True)
 
-        print("sap_siparis.exe çalıştırılıyor...")
+        print("SAP GUI bağlantısı kuruluyor...")
+        # 1. Açık olan SAP GUI uygulamasını yakala
+        SapGuiAuto = win32com.client.GetObject("SAPGUI")
+        application = SapGuiAuto.GetScriptingEngine
 
-        # Çıktı klasörü pozisyonel argüman olarak veriliyor.
-        # Process tamamlanana kadar (kapanana kadar) bekleniyor.
-        subprocess.run([exe_yolu, data_klasoru], check=True)
+        # Aktif bağlantı ve oturumu al
+        connection = application.Connections(0)
+        session = connection.Sessions(0)
 
-        print(f"sap_siparis.exe tamamlandı. Çıktılar '{data_klasoru}' klasörüne yazıldı.")
+        print("SAP penceresi büyütülüyor ve ZP07 işlem koduna gidiliyor...")
+        session.findById("wnd[0]").maximize()
+
+        # ZP07'ye giriş yap
+        session.findById("wnd[0]/tbar[0]/okcd").text = "zp07"
+        session.findById("wnd[0]").sendVKey(0)
+        time.sleep(2)  # Ekranın yüklenmesi için kısa bir bekleme
+
+        print("Filtre alanları dolduruluyor...")
+        # Filtreleri doldur (VBS kaydındaki alanlar)
+        session.findById("wnd[0]/usr/ctxtS_WERKS-LOW").text = "BU10"
+        session.findById("wnd[0]/usr/txtP_NUMWW").text = ""
+        session.findById("wnd[0]/usr/ctxtP_SCAL").text = "TR"
+
+        # Malzeme çoklu seçim butonuna bas
+        session.findById("wnd[0]/usr/btn%_S_MATNR_%_APP_%-VALU_PUSH").press()
+        time.sleep(1)
+
+        # Malzeme kodunu gir
+        session.findById("wnd[1]/usr/tabsTAB_STRIP/tabpSIVA/ssubSCREEN_HEADER:SAPLALDB:3010/tblSAPLALDBSINGLE/ctxtRSCSEL_255-SLOW_I[1,0]").text = "587570vd"
+
+        # Seçimleri onayla ve rapora dön (F8 adımları)
+        session.findById("wnd[1]/tbar[0]/btn[0]").press()
+        session.findById("wnd[1]/tbar[0]/btn[8]").press()
+
+        print("Rapor çalıştırılıyor (F8)...")
+        session.findById("wnd[0]/tbar[1]/btn[8]").press()
+        time.sleep(5)  # Raporun yüklenme süresine göre gerekirse artırılabilir
+
+        print("Veriler Excel formatında dışarı aktarılıyor...")
+        # Excel dışa aktar menülerini tetikle
+        grid_shell = session.findById("wnd[0]/usr/cntlZALV/shellcont/shell")
+        grid_shell.pressToolbarContextButton("&MB_EXPORT")
+        grid_shell.selectContextMenuItem("&XXL")
+        time.sleep(2)
+
+        # 1. onay penceresi (format seçimi - Yeşil tik)
+        session.findById("wnd[1]/tbar[0]/btn[0]").press()
+        time.sleep(1)
+
+        # 2. pencere: kayıt yeri/dosya adı alanları varsa 'data' klasörünü ve
+        # sabit dosya adını buraya yazıyoruz. Bu alanlar bu ekranda yoksa
+        # (SAP sürümüne göre değişebilir), varsayılan davranışa geri dönülür.
+        try:
+
+            session.findById("wnd[1]/usr/ctxtDY_PATH").text = data_klasoru
+            session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = dosya_adi
+
+            print(f"Kayıt yolu '{data_klasoru}' ve dosya adı '{dosya_adi}' olarak ayarlandı.")
+
+        except Exception:
+
+            print("Uyarı: Dizin/dosya adı alanları bu ekranda bulunamadı, SAP'nin varsayılan konumu kullanılacak.")
+
+        # Çıkan onay penceresini geç (Yeşil tik butonu)
+        session.findById("wnd[1]/tbar[0]/btn[0]").press()
+        time.sleep(3)  # Excel'in bilgisayarda açılma süresi için bekleme
+
+        print(f"İşlem başarıyla tamamlandı! Çıktı '{data_klasoru}' klasörüne yazılmaya çalışıldı.")
 
         return True
 
-    except subprocess.CalledProcessError as e:
-
-        print("\n!!! sap_siparis.exe HATA İLE SONLANDI !!!")
-        print(f"Çıkış kodu: {e.returncode}")
-
-        return False
-
     except Exception as e:
 
-        print("\n!!! BİR HATA OLUŞTU !!!")
-        print(f"Hata detayı: {e}")
+        print(f"Bir hata oluştu! Hata detayı: \n{e}")
 
         return False
 
@@ -112,4 +165,4 @@ if __name__ == "__main__":
 
     if sap_sisteme_gir():
 
-        sap_siparis_calistir()
+        sap_siparis_cek()
