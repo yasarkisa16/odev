@@ -182,13 +182,30 @@ def siparis_duzenle():
 
     try:
 
+        # SAP export'un dosyayı diske yazmasını bekliyoruz (yarış durumuna karşı).
+        bekleme_sayaci = 0
+
+        while not os.path.exists(dosya_yolu) and bekleme_sayaci < 10:
+
+            time.sleep(1)
+
+            bekleme_sayaci += 1
+
+        if not os.path.exists(dosya_yolu):
+
+            print(f"Hata: '{dosya_yolu}' bulunamadı. sap_siparis_cek() dosyayı bu konuma yazmamış olabilir.")
+
+            return False
+
         print("siparis.xlsx düzenleniyor...")
 
-        excel = win32com.client.Dispatch("Excel.Application")
+        # DispatchEx: mevcut/askıda kalmış bir Excel örneğine bağlanmak yerine
+        # her zaman yeni ve izole bir Excel örneği başlatır.
+        excel = win32com.client.DispatchEx("Excel.Application")
         excel.Visible = False
         excel.DisplayAlerts = False
 
-        wb = excel.Workbooks.Open(dosya_yolu)
+        wb = excel.Workbooks.Open(dosya_yolu, UpdateLinks=0, ReadOnly=False, IgnoreReadOnlyRecommended=True)
         ws = wb.Worksheets(1)
 
         son_satir = ws.Cells(ws.Rows.Count, 1).End(XL_UP).Row
@@ -211,15 +228,13 @@ def siparis_duzenle():
 
         # 3. Pivot tablo mantığında yeni sekme: satırlarda Material,
         # değerlerde Stock/Back + tüm ay sütunlarının toplamı (Sum).
-        pivot_sekme_adi = "Pivot"
+        pivot_sekme_adi = "siparis_pivot"
 
-        for sh in wb.Worksheets:
+        mevcut_sekme_adlari = [sh.Name for sh in wb.Worksheets]
 
-            if sh.Name == pivot_sekme_adi:
+        if pivot_sekme_adi in mevcut_sekme_adlari:
 
-                sh.Delete()
-
-                break
+            wb.Worksheets(pivot_sekme_adi).Delete()
 
         pivot_ws = wb.Worksheets.Add()
         pivot_ws.Name = pivot_sekme_adi
@@ -244,7 +259,11 @@ def siparis_duzenle():
 
         wb.Save()
 
-        print(f"'{pivot_sekme_adi}' sekmesinde pivot tablo oluşturuldu ve dosya kaydedildi: {dosya_yolu}")
+        degisiklik_zamani = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(os.path.getmtime(dosya_yolu)))
+
+        print(f"'{pivot_sekme_adi}' sekmesinde pivot tablo oluşturuldu ve dosya kaydedildi.")
+        print(f"Dosya yolu: {dosya_yolu}")
+        print(f"Son değişiklik zamanı: {degisiklik_zamani}")
 
         return True
 
@@ -256,13 +275,25 @@ def siparis_duzenle():
 
     finally:
 
-        if wb is not None:
+        try:
 
-            wb.Close(SaveChanges=False)
+            if wb is not None:
 
-        if excel is not None:
+                wb.Close(SaveChanges=False)
 
-            excel.Quit()
+        except Exception as e:
+
+            print(f"Uyarı: Çalışma kitabı kapatılırken hata oluştu: {e}")
+
+        try:
+
+            if excel is not None:
+
+                excel.Quit()
+
+        except Exception as e:
+
+            print(f"Uyarı: Excel kapatılırken hata oluştu: {e}")
 
 
 # Kodu çalıştır
