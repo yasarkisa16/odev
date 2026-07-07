@@ -218,13 +218,17 @@ def siparis_duzenle():
 
         tum_alan = ws.Range(ws.Cells(1, 1), ws.Cells(son_satir, son_sutun))
 
-        # 1. Tüm başlıklara filtre (AutoFilter okları) ekleniyor.
-        tum_alan.AutoFilter()
+        # Önceden kalmış bir AutoFilter durumu varsa temizle (aksi halde
+        # parametresiz AutoFilter() çağrısı filtreyi kapatabilir).
+        if ws.AutoFilterMode:
 
-        # 2. Figures sütununda sadece "Customer demand" kalacak şekilde filtre.
+            ws.AutoFilterMode = False
+
+        # 1 ve 2 tek adımda: tüm başlıklara filtre oku eklenir ve aynı anda
+        # Figures sütunu "Customer demand" değerine göre filtrelenir.
         tum_alan.AutoFilter(Field=figures_sutunu, Criteria1="Customer demand")
 
-        print("Filtreler uygulandı (Figures = Customer demand).")
+        print("Filtreler uygulandı (tüm başlıklarda filtre oku + Figures = Customer demand).")
 
         # 3. Pivot tablo mantığında yeni sekme: satırlarda Material,
         # değerlerde Stock/Back + tüm ay sütunlarının toplamı (Sum).
