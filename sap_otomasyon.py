@@ -159,10 +159,118 @@ def sap_siparis_cek():
         return False
 
 
+def siparis_duzenle():
+
+    # sap_siparis_cek() tarafından üretilen dosya üzerinde çalışılıyor.
+
+    script_dizini = os.path.dirname(os.path.abspath(__file__))
+
+    data_klasoru = os.path.join(script_dizini, "data")
+
+    dosya_yolu = os.path.join(data_klasoru, "siparis.xlsx")
+
+    # Excel sabitleri (late binding kullanıldığı için elle tanımlandı)
+    XL_UP = -4162
+    XL_TO_LEFT = -4159
+    XL_DATABASE = 1
+    XL_ROW_FIELD = 1
+    XL_PAGE_FIELD = 3
+    XL_SUM = -4157
+
+    excel = None
+    wb = None
+
+    try:
+
+        print("siparis.xlsx düzenleniyor...")
+
+        excel = win32com.client.Dispatch("Excel.Application")
+        excel.Visible = False
+        excel.DisplayAlerts = False
+
+        wb = excel.Workbooks.Open(dosya_yolu)
+        ws = wb.Worksheets(1)
+
+        son_satir = ws.Cells(ws.Rows.Count, 1).End(XL_UP).Row
+        son_sutun = ws.Cells(1, ws.Columns.Count).End(XL_TO_LEFT).Column
+
+        basliklar = {ws.Cells(1, c).Value: c for c in range(1, son_sutun + 1)}
+
+        figures_sutunu = basliklar["Figures"]
+        stockback_sutunu = basliklar["Stock/Back"]
+
+        tum_alan = ws.Range(ws.Cells(1, 1), ws.Cells(son_satir, son_sutun))
+
+        # 1. Tüm başlıklara filtre (AutoFilter okları) ekleniyor.
+        tum_alan.AutoFilter()
+
+        # 2. Figures sütununda sadece "Customer demand" kalacak şekilde filtre.
+        tum_alan.AutoFilter(Field=figures_sutunu, Criteria1="Customer demand")
+
+        print("Filtreler uygulandı (Figures = Customer demand).")
+
+        # 3. Pivot tablo mantığında yeni sekme: satırlarda Material,
+        # değerlerde Stock/Back + tüm ay sütunlarının toplamı (Sum).
+        pivot_sekme_adi = "Pivot"
+
+        for sh in wb.Worksheets:
+
+            if sh.Name == pivot_sekme_adi:
+
+                sh.Delete()
+
+                break
+
+        pivot_ws = wb.Worksheets.Add()
+        pivot_ws.Name = pivot_sekme_adi
+
+        pivot_cache = wb.PivotCaches().Create(SourceType=XL_DATABASE, SourceData=tum_alan)
+        pivot_tablo = pivot_cache.CreatePivotTable(TableDestination=pivot_ws.Range("A3"), TableName="SiparisPivot")
+
+        # Figures alanı rapor filtresine konuyor, sadece "Customer demand" seçili kalıyor.
+        figures_alani = pivot_tablo.PivotFields("Figures")
+        figures_alani.Orientation = XL_PAGE_FIELD
+        figures_alani.CurrentPage = "Customer demand"
+
+        # Satır etiketi: Material
+        pivot_tablo.PivotFields("Material").Orientation = XL_ROW_FIELD
+
+        # Veri alanları: Stock/Back + tüm ay sütunları (Sum)
+        for c in range(stockback_sutunu, son_sutun + 1):
+
+            alan_adi = ws.Cells(1, c).Value
+
+            pivot_tablo.AddDataField(pivot_tablo.PivotFields(alan_adi), f"Sum of {alan_adi}", XL_SUM)
+
+        wb.Save()
+
+        print(f"'{pivot_sekme_adi}' sekmesinde pivot tablo oluşturuldu ve dosya kaydedildi: {dosya_yolu}")
+
+        return True
+
+    except Exception as e:
+
+        print(f"Bir hata oluştu! Hata detayı: \n{e}")
+
+        return False
+
+    finally:
+
+        if wb is not None:
+
+            wb.Close(SaveChanges=False)
+
+        if excel is not None:
+
+            excel.Quit()
+
+
 # Kodu çalıştır
 
 if __name__ == "__main__":
 
     if sap_sisteme_gir():
 
-        sap_siparis_cek()
+        if sap_siparis_cek():
+
+            siparis_duzenle()
